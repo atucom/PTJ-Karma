@@ -16,7 +16,7 @@ dhcp_broadcast='10.10.0.255'
 dhcp_dgw='10.10.0.10' #gateway of connected clients, should be the IP of at0
 dhcp_dns='4.2.2.2' #dhs the connected clients will have
 dhcp_start='10.10.0.100' #start of pool
-dhcp_last='10.10.0.150' #end of pool
+dhcp_stop='10.10.0.150' #end of pool
 ssid="LOLBUTTS" #just a placeholder, will send out probes and grab clients probing for other ESSIDS
 channel='6' #channel the fake AP will run on
 inet_int='eth2' #the "internet" interface that we will route traffic through
@@ -68,8 +68,6 @@ check
 echo -n "Wiping any previous DHCP leases"
 echo > '/var/lib/dhcp3/dhcpd.leases'
 check
-#creating a symlink to dhcpd.pid
-#ln -s /var/run/dhcp3-server/dhcp.pid /var/run/dhcpd.pid
 
 #start dhcp server and enable ip forwarding
 echo -n "Starting the DHCP server on at0"
