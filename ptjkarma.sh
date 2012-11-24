@@ -21,6 +21,8 @@ ssid="LOLBUTTS" #just a placeholder, will send out probes and grab clients probi
 channel='6' #channel the fake AP will run on
 inet_int='eth2' #the "internet" interface that we will route traffic through
 
+if [ -f ptjkarma.conf ]; then source ptjkarma.conf; else echo "no conf file, using defaults"; fi
+
 echo -n "Cleaning the slate (killall airbase and dhcpd)"
 killall airbase-ng &> /dev/null
 killall dhcpd3 &> /dev/null
