@@ -2,26 +2,33 @@
 
 #start Karma and routing
 
-check(){
-	if [ $? == 0 ];
-	then for i in {0..10}; do echo -n '.' ; sleep .1; done; echo "COMPLETE"
-	else for i in {0..10}; do echo -n '.' ; sleep .1; done; echo "FAILED"
-	fi
-};
-
-wlan_int='wlan1' #the wireless interface we will use
+wlan_int='wlan3' #the wireless interface we will use
 dhcp_subnet='10.10.0.0' #the subnet you will drop your hosts into
 dhcp_subnetmask='255.255.255.0'
 dhcp_broadcast='10.10.0.255'
 dhcp_dgw='10.10.0.10' #gateway of connected clients, should be the IP of at0
-dhcp_dns='4.2.2.2' #dhs the connected clients will have
+dhcp_dns='8.8.8.8' #dhs the connected clients will have
 dhcp_start='10.10.0.100' #start of pool
 dhcp_stop='10.10.0.150' #end of pool
 ssid="LOLBUTTS" #just a placeholder, will send out probes and grab clients probing for other ESSIDS
 channel='6' #channel the fake AP will run on
 inet_int='eth2' #the "internet" interface that we will route traffic through
 
-if [ -f ptjkarma.conf ]; then source ptjkarma.conf; else echo "no conf file, using defaults"; fi
+
+check(){
+	if [ $? == 0 ]; then
+		for i in {0..10}; do echo -n '.' ; sleep .1;  done; echo "COMPLETE"
+		else 
+		for i in {0..10}; do echo -n '.' ; done; echo "FAILED"
+	fi
+}
+
+#if the config file exists, then source it, otherwise continue
+if [ -f ptjkarma.conf ]; then source ptjkarma.conf; else echo "no conf file in current dir, using defaults"; fi
+echo "bringing up wlan interface"
+ifconfig $wlan_int up
+#if mon0 does not exist, start it
+if ifconfig mon0 &> /dev/null ; then echo "mon0 is up, continuing" ; else airmon-ng start $wlan_int; fi
 
 echo -n "Cleaning the slate (killall airbase and dhcpd)"
 killall airbase-ng &> /dev/null
@@ -49,7 +56,7 @@ check
 #Configure at0 before bringing it up
 echo -n "Initializing at0 interface"
 ifconfig at0 down
-ifconfig at0 $dhcp_dgw netmask $dhcp_subnetmask 
+ifconfig at0 $dhcp_dgw netmask $dhcp_subnetmask
 ifconfig at0 up
 route add -net $dhcp_subnet netmask $dhcp_subnetmask gw $dhcp_dgw
 check
@@ -78,4 +85,3 @@ check
 echo -n "Enabling ip forwarding"
 sysctl -q -w net.ipv4.ip_forward=1
 check
-
