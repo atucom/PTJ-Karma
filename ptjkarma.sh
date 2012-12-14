@@ -50,7 +50,7 @@ check
 
 #airbase creates the new wireless AP and creates the at0 interface
 echo -n "Starting airbase with ESSID:${ssid}"
-xterm -e airbase-ng -e ${ssid} -P -c $channel -v mon0 -I 1 -C 10 &
+xterm -e airbase-ng -e ${ssid} -P -c $channel -v mon0 -I 75 -C 10 &
 check
 
 #Configure at0 before bringing it up
